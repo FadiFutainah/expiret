@@ -8,8 +8,8 @@ class Storage {
   Storage._internal();
 
   String _token = '';
-
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+
   FlutterSecureStorage get secureStorage => _secureStorage;
 
   Future<String> get token async {

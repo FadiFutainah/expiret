@@ -20,7 +20,7 @@ class DataService extends BaseService {
           'Authorization': 'Bearer $token',
         },
       ).timeout(const Duration(seconds: 40));
-      return getResponse(response);
+      return returnResponse(response);
     } on SocketException {
       throw InternetConnectionException();
     } on TimeoutException {
@@ -28,7 +28,29 @@ class DataService extends BaseService {
     }
   }
 
-  Map<String, dynamic> getResponse(http.Response response) {
+  @override
+  Future<Map<String, dynamic>> postRequest(
+      String url, Map<String, dynamic> body) async {
+    try {
+      var uri = Uri.parse(baseUrl + url);
+      var token = Storage().token;
+      var response = await http.post(
+        uri,
+        body: body,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 40));
+      return returnResponse(response);
+    } on SocketException {
+      throw InternetConnectionException();
+    } on TimeoutException {
+      throw WeakInternetConnection();
+    }
+  }
+
+  Map<String, dynamic> returnResponse(http.Response response) {
     switch (response.statusCode) {
       case 200:
         return jsonDecode(response.body);
