@@ -1,7 +1,11 @@
 import 'package:expiret/models/review_model.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import 'like_model.dart';
 
+part 'json_parsers/product_model.g.dart';
+
+@JsonSerializable()
 class Product {
   final int id;
   final int views;
@@ -34,4 +38,9 @@ class Product {
     this.reviews,
     this.facebookAccount,
   );
+
+  factory Product.fromJson(Map<String, dynamic> json) =>
+      _$ProductFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProductToJson(this);
 }
