@@ -1,8 +1,9 @@
+import 'package:expiret/config/config.dart';
 import 'package:expiret/models/product_model.dart';
 import 'package:expiret/services/data_service.dart';
 
 class ProductRepository {
-  final DataService _dataService = DataService();
+  static final DataService _dataService = DataService();
 
   Future<List<Product>> getAllProducts() async {
     List<Map<String, dynamic>> data =
@@ -10,8 +11,8 @@ class ProductRepository {
     return data.map((e) => Product.fromJson(e)).toList();
   }
 
-  void getProductsOrderedBy(List<Product> products, [Order? odrder]) {
-    switch (odrder) {
+  void getProductsOrderedBy(List<Product> products, [Order? order]) {
+    switch (order) {
       case Order.price:
         products.sort((a, b) => a.price.compareTo(b.price));
         break;
@@ -36,9 +37,9 @@ class ProductRepository {
     }
   }
 
-  Future<List<Product>> getProductsByCategory(String category) async {
+  Future<List<Product>> getProductsByCategory(Category category) async {
     List<Map<String, dynamic>> data =
-        await _dataService.getRequest('products/get/$category');
+        await _dataService.getRequest('products/get/' + category.getString());
     return data.map((e) => Product.fromJson(e)).toList();
   }
 
@@ -65,13 +66,4 @@ class ProductRepository {
         await _dataService.putRequest('products/edit', product.toJson());
     return data['message'];
   }
-}
-
-enum Order {
-  price,
-  expireDate,
-  views,
-  quantity,
-  discount,
-  likes,
 }

@@ -5,9 +5,11 @@ part 'json_parsers/like_model.g.dart';
 @JsonSerializable()
 class Like {
   final int userId;
+  final int productId;
 
   const Like(
     this.userId,
+    this.productId,
   );
 
   factory Like.fromJson(Map<String, dynamic> json) => _$LikeFromJson(json);

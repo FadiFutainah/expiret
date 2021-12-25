@@ -5,11 +5,11 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:expiret/config/error/exceptions.dart';
 import 'package:expiret/services/local_storage.dart';
-import 'package:expiret/services/base_service.dart';
+import 'package:expiret/services/rest_api_service.dart';
 
-class DataService extends BaseService {
+class DataService extends RestApiService {
   @override
-  Future<Map<String, dynamic>> getRequest(String url) async {
+  Future<dynamic> getRequest(String url) async {
     try {
       var uri = Uri.parse(baseUrl + url);
       var token = Storage().token;
@@ -29,8 +29,7 @@ class DataService extends BaseService {
   }
 
   @override
-  Future<Map<String, dynamic>> postRequest(
-      String url, Map<String, dynamic> body) async {
+  Future<dynamic> postRequest(String url, Map<String, dynamic> body) async {
     try {
       var uri = Uri.parse(baseUrl + url);
       var token = Storage().token;
@@ -50,7 +49,49 @@ class DataService extends BaseService {
     }
   }
 
-  Map<String, dynamic> returnResponse(http.Response response) {
+  @override
+  Future<dynamic> deleteRequest(String url, Map<String, dynamic> body) async {
+    try {
+      var uri = Uri.parse(baseUrl + url);
+      var token = Storage().token;
+      var response = await http.delete(
+        uri,
+        body: body,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 40));
+      return returnResponse(response);
+    } on SocketException {
+      throw InternetConnectionException();
+    } on TimeoutException {
+      throw WeakInternetConnection();
+    }
+  }
+
+  @override
+  Future<dynamic> putRequest(String url, Map<String, dynamic> body) async {
+    try {
+      var uri = Uri.parse(baseUrl + url);
+      var token = Storage().token;
+      var response = await http.put(
+        uri,
+        body: body,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 40));
+      return returnResponse(response);
+    } on SocketException {
+      throw InternetConnectionException();
+    } on TimeoutException {
+      throw WeakInternetConnection();
+    }
+  }
+
+  dynamic returnResponse(http.Response response) {
     switch (response.statusCode) {
       case 200:
         return jsonDecode(response.body);

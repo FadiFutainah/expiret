@@ -17,3 +17,6 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'phoneNumber': instance.phoneNumber,
       'facebookAccount': instance.facebookAccount,
     };
+
+
+
